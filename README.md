@@ -45,21 +45,21 @@ Add the plugin to your `pom.xml`:
 
 ## Usage
 
-1. **Annotate your interface** with `@Prefixed`:  
+Annotate your interface with `@Prefixed`:  
 
 ```java
 @Prefixed("Logger")
 public interface Logger { ... }
 ```
 
-2. **Implement the interface** with a correctly prefixed class:  
+Implement the interface with a correctly prefixed class:  
 
 ```java
 public class LoggerFile implements Logger { ... } // ✅ Valid
 public class FileLogger implements Logger { ... }  // ❌ Fails build
 ```
 
-3. **Run the plugin**:  
+Run the plugin:  
 
 ```bash
 mvn clean verify
