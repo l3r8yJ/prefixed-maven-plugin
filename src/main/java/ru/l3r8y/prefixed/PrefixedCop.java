@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  * @since 0.0.0
  */
 @Mojo(name = "prefixed", defaultPhase = LifecyclePhase.VERIFY)
-public final class Cop extends AbstractMojo {
+public final class PrefixedCop extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
