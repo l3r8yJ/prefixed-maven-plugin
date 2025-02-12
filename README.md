@@ -15,10 +15,10 @@ consistent code style and adherence to naming contracts.
 
 ## Features
 
-- **Annotation-driven validation**: Uses `@Prefixed` to define required
+* **Annotation-driven validation**: Uses `@Prefixed` to define required
 prefixes for interface implementations.  
-- **Build enforcement**: Fails the build if classes violate the prefix rule.  
-- **Customizable checks**: Configure scanning phases and excluded packages.  
+* **Build enforcement**: Fails the build if classes violate the prefix rule.  
+* **Customizable checks**: Configure scanning phases and excluded packages.  
 
 ## Installation
 
