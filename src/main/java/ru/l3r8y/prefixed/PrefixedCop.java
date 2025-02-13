@@ -23,7 +23,11 @@
  */
 package ru.l3r8y.prefixed;
 
+import io.github.classgraph.AnnotationInfo;
+import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,15 +54,13 @@ public final class PrefixedCop extends AbstractMojo {
     private MavenProject project;
 
     /**
-     * The base package of project.
+     * The base package.
      */
     @Parameter(property = "basePackage", defaultValue = "${project.groupId}")
     private String basePackage;
 
     /**
-     * The fail on error.
-     *
-     * @checkstyle MemberNameCheck (6 lines).
+     * Fail on error flag.
      */
     @SuppressWarnings("PMD.ImmutableField")
     @Parameter(defaultValue = "true")
@@ -79,52 +81,62 @@ public final class PrefixedCop extends AbstractMojo {
             .enableClassInfo()
             .enableAnnotationInfo();
         try (final ScanResult scanResult = graph.scan()) {
-            final int totalInterfaces = scanResult.getAllInterfaces().size();
-            this.getLog().info("Total interfaces found: " + totalInterfaces);
+            final List<ClassInfo> prefixedInterfaces = scanResult
+                .getClassesWithAnnotation("ru.l3r8y.prefixed.annotation.Prefixed")
+                .stream()
+                .filter(ClassInfo::isInterface)
+                .toList();
+            this.getLog().info("Total interfaces found: " + prefixedInterfaces.size());
             final List<String> errors = new ArrayList<>(0);
-            for (final var iface : scanResult.getAllInterfaces()) {
-                final var prefixedAnno = iface.getAnnotationInfo().stream()
-                    .filter(ai -> "ru.l3r8y.prefixed.annotation.Prefixed".equals(ai.getName()))
-                    .findFirst().orElse(null);
-                if (prefixedAnno == null) {
+            for (final ClassInfo iface : prefixedInterfaces) {
+                final AnnotationInfo prefixedAnno = iface.getAnnotationInfo()
+                    .get("ru.l3r8y.prefixed.annotation.Prefixed");
+                final AnnotationParameterValue prefixParam = prefixedAnno.getParameterValues().get("prefix");
+                if (prefixParam == null) {
+                    this.handleMissingPrefix(iface.getName());
                     continue;
                 }
-                final var prefixParam = prefixedAnno.getParameterValues().get("prefix");
-                if (prefixParam == null) {
-                    final String msg = String.format("Interface '%s' is marked with @Prefixed but no prefix provided", iface.getName());
-                    if (this.failOnError) {
-                        throw new MojoExecutionException(msg);
-                    }
-                    else {
-                        this.getLog().warn(msg);
-                        continue;
-                    }
-                }
                 final String expectedPrefix = prefixParam.getValue().toString();
-
-                final var implClasses = scanResult.getClassesImplementing(iface.getName());
-                for (final var impl : implClasses) {
-                    if (impl.isInterface()) {
-                        continue;
-                    }
-                    if (!impl.getSimpleName().startsWith(expectedPrefix)) {
-                        final String error = String.format(
-                            "Class '%s' implements '%s' but does not start with prefix '%s'",
-                            impl.getName(), iface.getSimpleName(), expectedPrefix);
-                        errors.add(error);
-                        this.getLog().warn(error);
-                    }
-                }
+                final ClassInfoList implClasses = scanResult.getClassesImplementing(iface.getName());
+                final List<String> classErrors = implClasses.stream()
+                    .parallel()
+                    .filter(impl -> !impl.isInterface())
+                    .filter(impl -> !impl.getSimpleName().startsWith(expectedPrefix))
+                    .map(impl -> this.formatError(impl.getName(), iface.getSimpleName(), expectedPrefix))
+                    .toList();
+                errors.addAll(classErrors);
+                classErrors.forEach(error -> this.getLog().warn(error));
             }
+            this.handleErrors(errors);
+        }
+    }
 
-            if (!errors.isEmpty()) {
-                final String message = String.join("\n", errors);
-                if (this.failOnError) {
-                    throw new MojoExecutionException(errors.size() + " prefix violations found:\n" + message);
-                }
-                else {
-                    this.getLog().warn(errors.size() + " prefix violations (non-fatal):\n" + message);
-                }
+    private void handleMissingPrefix(final String interfaceName) throws MojoExecutionException {
+        final String msg = String.format(
+            "Interface '%s' is marked with @Prefixed but no prefix provided",
+            interfaceName
+        );
+        if (this.failOnError) {
+            throw new MojoExecutionException(msg);
+        } else {
+            this.getLog().warn(msg);
+        }
+    }
+
+    private String formatError(final String className, final String interfaceName, final String prefix) {
+        return String.format(
+            "Class '%s' implements '%s' but does not start with prefix '%s'",
+            className, interfaceName, prefix
+        );
+    }
+
+    private void handleErrors(final List<String> errors) throws MojoExecutionException {
+        if (!errors.isEmpty()) {
+            final String message = String.join("\n", errors);
+            if (this.failOnError) {
+                throw new MojoExecutionException(errors.size() + " prefix violations found:\n" + message);
+            } else {
+                this.getLog().warn(errors.size() + " prefix violations (non-fatal):\n" + message);
             }
         }
     }
