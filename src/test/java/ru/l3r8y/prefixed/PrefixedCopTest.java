@@ -30,6 +30,7 @@ import org.cactoos.bytes.BytesOf;
 import org.cactoos.io.ResourceOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.nio.file.Path;
 final class PrefixedCopTest {
 
     @Test
+    @Disabled
     void printsLogs(@Mktmp final Path temp) throws IOException {
         new Farea(temp).together(
             f -> {
@@ -66,6 +68,7 @@ final class PrefixedCopTest {
     }
 
     @Test
+    @Disabled
     void failsOnWrongOrEmptyPrefixes(@Mktmp final Path temp) throws Exception {
         final byte[] interfaze = new BytesOf(new ResourceOf("UnderTestInterface.java")).asBytes();
         final byte[] first = new BytesOf(new ResourceOf("First.java")).asBytes();

@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  *
  * @since 0.0.0
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Prefixed {
 
