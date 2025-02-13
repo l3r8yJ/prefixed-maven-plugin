@@ -35,17 +35,27 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import ru.l3r8y.prefixed.annotation.Prefixed;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Prefixed cop.
+ * This class designed with focus on performance, this is
+ * why code may look ugly to you.
  *
  * @since 0.0.0
  */
 @Mojo(name = "prefixed", defaultPhase = LifecyclePhase.VERIFY)
 public final class PrefixedCop extends AbstractMojo {
+
+    /**
+     * Thread pool to scan project.
+     */
+    private static final ExecutorService EXECUTORS = Executors.newVirtualThreadPerTaskExecutor();
 
     /**
      * The project.
@@ -80,17 +90,16 @@ public final class PrefixedCop extends AbstractMojo {
             .acceptPackages(this.basePackage)
             .enableClassInfo()
             .enableAnnotationInfo();
-        try (final ScanResult scanResult = graph.scan()) {
+        try (final ScanResult scanResult = graph.scan(PrefixedCop.EXECUTORS, Runtime.getRuntime().availableProcessors())) {
             final List<ClassInfo> prefixedInterfaces = scanResult
-                .getClassesWithAnnotation("ru.l3r8y.prefixed.annotation.Prefixed")
+                .getClassesWithAnnotation(Prefixed.class)
                 .stream()
                 .filter(ClassInfo::isInterface)
                 .toList();
             this.getLog().info("Total interfaces found: " + prefixedInterfaces.size());
             final List<String> errors = new ArrayList<>(0);
             for (final ClassInfo iface : prefixedInterfaces) {
-                final AnnotationInfo prefixedAnno = iface.getAnnotationInfo()
-                    .get("ru.l3r8y.prefixed.annotation.Prefixed");
+                final AnnotationInfo prefixedAnno = iface.getAnnotationInfo().get(Prefixed.class.getName());
                 final AnnotationParameterValue prefixParam = prefixedAnno.getParameterValues().get("prefix");
                 if (prefixParam == null) {
                     this.handleMissingPrefix(iface.getName());
@@ -118,7 +127,8 @@ public final class PrefixedCop extends AbstractMojo {
         );
         if (this.failOnError) {
             throw new MojoExecutionException(msg);
-        } else {
+        }
+        else {
             this.getLog().warn(msg);
         }
     }
@@ -135,7 +145,8 @@ public final class PrefixedCop extends AbstractMojo {
             final String message = String.join("\n", errors);
             if (this.failOnError) {
                 throw new MojoExecutionException(errors.size() + " prefix violations found:\n" + message);
-            } else {
+            }
+            else {
                 this.getLog().warn(errors.size() + " prefix violations (non-fatal):\n" + message);
             }
         }
