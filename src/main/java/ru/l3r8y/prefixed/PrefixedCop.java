@@ -160,7 +160,8 @@ public final class PrefixedCop extends AbstractMojo {
     private static String formatError(
         final String clazz,
         final String interfaze,
-        final String prefix) {
+        final String prefix
+    ) {
         return "Class '%s' implements '%s' but does not start with prefix '%s'"
             .formatted(
                 clazz,
