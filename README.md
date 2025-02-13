@@ -48,7 +48,7 @@ Add the plugin to your `pom.xml`:
 Annotate your interface with `@Prefixed`:
 
 ```java
-@Prefixed("Logger")
+@Prefixed(prefix = "Logger")
 public interface Logger { ... }
 ```
 
@@ -71,12 +71,10 @@ Configure the plugin in your `pom.xml`:
 
 ```xml
 <configuration>
-  <!-- Phase to check (default: verify) -->
-  <checkPhase>verify</checkPhase>
-  <!-- Packages to exclude (comma-separated) -->
-  <excludePackages>com.example.excluded.*</excludePackages>
   <!-- Fail build on violation (default: true) -->
   <failOnError>true</failOnError>
+  <!-- Your group id by default   -->
+  <basePackage>{groupId}</basePackage>
 </configuration>
 ```
 

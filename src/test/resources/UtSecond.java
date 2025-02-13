@@ -1,1 +1,2 @@
-class UtSecond implements UnderTestInterface{}
+class UtSecond implements UnderTestInterface {
+}

@@ -127,8 +127,7 @@ public final class PrefixedCop extends AbstractMojo {
         );
         if (this.failOnError) {
             throw new MojoExecutionException(msg);
-        }
-        else {
+        } else {
             this.getLog().warn(msg);
         }
     }
@@ -145,8 +144,7 @@ public final class PrefixedCop extends AbstractMojo {
             final String message = String.join("\n", errors);
             if (this.failOnError) {
                 throw new MojoExecutionException(errors.size() + " prefix violations found:\n" + message);
-            }
-            else {
+            } else {
                 this.getLog().warn(errors.size() + " prefix violations (non-fatal):\n" + message);
             }
         }

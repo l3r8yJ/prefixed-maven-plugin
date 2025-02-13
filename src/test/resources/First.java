@@ -1,1 +1,2 @@
-class First implements UnderTestInterface {}
+class First implements UnderTestInterface {
+}
