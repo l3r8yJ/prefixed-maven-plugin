@@ -23,11 +23,18 @@
  */
 package ru.l3r8y.prefixed.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * The prefixed annotation.
  *
  * @since 0.0.0
  */
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
 public @interface Prefixed {
 
     /**

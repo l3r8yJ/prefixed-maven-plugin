@@ -25,7 +25,6 @@ package ru.l3r8y.prefixed;
 
 import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import one.util.streamex.StreamEx;
@@ -38,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 /**
  * Prefixed cop.
@@ -72,17 +72,21 @@ public final class PrefixedCop extends AbstractMojo {
         }
         this.getLog().info(String.format("Enforcing @Prefixed naming conventions in: '%s'", directory));
         final ClassGraph graph = new ClassGraph()
-            .acceptPaths(directory)
+            .overrideClasspath(directory)
             .enableClassInfo()
             .enableAnnotationInfo();
-        try (final ScanResult result = graph.scan()) {
-            final ClassInfoList classes = result.getAllClasses();
+        try (
+            final ScanResult result = graph.scan(
+                Executors.newVirtualThreadPerTaskExecutor(),
+                Runtime.getRuntime().availableProcessors()
+            )
+        ) {
+            final ClassInfoList classes = result.getAllInterfaces();
             if (classes.isEmpty()) {
                 this.getLog().info("No classes found, skipping phase...");
                 return;
             }
             final List<String> errors = StreamEx.of(classes)
-                .filter(ClassInfo::isInterface)
                 .cross(info -> StreamEx.of(info.getAnnotationInfo()).filter(it -> "Prefixed".equals(it.getName())))
                 .mapKeyValue(
                     (interfaze, anno) -> {
@@ -115,7 +119,7 @@ public final class PrefixedCop extends AbstractMojo {
                         triple.getValue().getKey().getSimpleName(),
                         triple.getValue().getValue()
                     )
-                ).peek(this.getLog()::error)
+                ).peek(this.getLog()::warn)
                 .toList();
             if (!errors.isEmpty()) {
                 final String message = String.join("\n", errors);
