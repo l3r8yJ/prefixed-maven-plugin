@@ -26,12 +26,14 @@ package ru.l3r8y.prefixed;
 import com.yegor256.Mktmp;
 import com.yegor256.MktmpResolver;
 import com.yegor256.farea.Farea;
-import java.io.IOException;
-import java.nio.file.Path;
+import org.cactoos.bytes.BytesOf;
+import org.cactoos.io.ResourceOf;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Tests for {@link PrefixedCop}.
@@ -56,9 +58,37 @@ final class PrefixedCopTest {
                     "Lints URL was not printed, but it should",
                     f.log().content(),
                     Matchers.containsString(
-                        "[INFO] Boom!"
+                        "[INFO] Enforcing @Prefixed naming conventions in:"
                     )
                 );
+            }
+        );
+    }
+
+    @Test
+    void failsOnWrongOrEmptyPrefixes(@Mktmp final Path temp) throws Exception {
+        final byte[] interfaze = new BytesOf(new ResourceOf("UnderTestInterface.java")).asBytes();
+        final byte[] first = new BytesOf(new ResourceOf("First.java")).asBytes();
+        final byte[] second = new BytesOf(new ResourceOf("UtSecond.java")).asBytes();
+        new Farea(temp).together(
+            f -> {
+                f.clean();
+                f.files()
+                    .file("main/src/java/UnderTestInterface.java")
+                    .write(interfaze);
+                f.files()
+                    .file("main/src/java/First.java")
+                    .write(first);
+                f.files()
+                    .file("main/src/java/UtSecond.java")
+                    .write(second);
+                f.build()
+                    .plugins()
+                    .appendItself()
+                    .execution()
+                    .goals("prefixed");
+                f.execQuiet("verify");
+                System.out.println(f.log().content());
             }
         );
     }

@@ -1,0 +1,1 @@
+class First implements UnderTestInterface {}

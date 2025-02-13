@@ -16,9 +16,9 @@ consistent code style and adherence to naming contracts.
 ## Features
 
 * **Annotation-driven validation**: Uses `@Prefixed` to define required
-prefixes for interface implementations.  
-* **Build enforcement**: Fails the build if classes violate the prefix rule.  
-* **Customizable checks**: Configure scanning phases and excluded packages.  
+prefixes for interface implementations.
+* **Build enforcement**: Fails the build if classes violate the prefix rule.
+* **Customizable checks**: Configure scanning phases and excluded packages.
 
 ## Installation
 
@@ -45,21 +45,21 @@ Add the plugin to your `pom.xml`:
 
 ## Usage
 
-Annotate your interface with `@Prefixed`:  
+Annotate your interface with `@Prefixed`:
 
 ```java
 @Prefixed("Logger")
 public interface Logger { ... }
 ```
 
-Implement the interface with a correctly prefixed class:  
+Implement the interface with a correctly prefixed class:
 
 ```java
 public class LoggerFile implements Logger { ... } // ✅ Valid
 public class FileLogger implements Logger { ... }  // ❌ Fails build
 ```
 
-Run the plugin:  
+Run the plugin:
 
 ```bash
 mvn clean verify
@@ -76,7 +76,7 @@ Configure the plugin in your `pom.xml`:
   <!-- Packages to exclude (comma-separated) -->
   <excludePackages>com.example.excluded.*</excludePackages>
   <!-- Fail build on violation (default: true) -->
-  <failOnViolation>true</failOnViolation>
+  <failOnError>true</failOnError>
 </configuration>
 ```
 
