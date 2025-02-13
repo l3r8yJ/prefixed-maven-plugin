@@ -15,9 +15,6 @@ ij_smart_tabs = false
 ij_wrap_on_typing = true
 ij_kotlin_imports_layout = *
 
-[*.xml]
-indent_size = 2
-
 ktlint_standard_argument-list-wrapping = disabled
 
 [*.java]
@@ -258,7 +255,7 @@ ij_java_use_single_class_imports = true
 ij_java_variable_annotation_wrap = off
 ij_java_visibility = public
 ij_java_while_brace_force = always
-ij_java_while_on_new_line = false
+ij_java_while_on_new_line = true
 ij_java_wrap_comments = false
 ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
@@ -522,6 +519,7 @@ ij_shell_switch_cases_indented = false
 ij_xml_block_comment_at_first_column = true
 ij_xml_keep_indents_on_empty_lines = false
 ij_xml_line_comment_at_first_column = true
+indent_size = 2
 
 [{spring.schemas,spring.handlers,*.properties}]
 ij_properties_align_group_field_declarations = false

@@ -1,2 +1,0 @@
-class First implements UnderTestInterface {
-}

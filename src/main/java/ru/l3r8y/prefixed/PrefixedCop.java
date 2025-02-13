@@ -29,36 +29,38 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import ru.l3r8y.prefixed.annotation.Prefixed;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import ru.l3r8y.prefixed.annotation.RequirePrefix;
 
 /**
  * Prefixed cop.
- * This class designed with focus on performance, this is
- * why code may look ugly to you.
+ * This class is designed with a focus on performance, which is why the code
+ * may look a bit unorthodox.
  *
  * @since 0.0.0
  */
-@Mojo(name = "prefixed", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "enforce", defaultPhase = LifecyclePhase.VERIFY)
 public final class PrefixedCop extends AbstractMojo {
 
     /**
      * Thread pool to scan project.
      */
-    private static final ExecutorService EXECUTORS = Executors.newVirtualThreadPerTaskExecutor();
+    private static final ExecutorService EXECUTORS =
+        Executors.newVirtualThreadPerTaskExecutor();
 
     /**
-     * The project.
+     * The Maven project.
      */
     @Parameter(defaultValue = "${project}")
     private MavenProject project;
@@ -67,85 +69,124 @@ public final class PrefixedCop extends AbstractMojo {
      * The base package.
      */
     @Parameter(property = "basePackage", defaultValue = "${project.groupId}")
-    private String basePackage;
+    private String basepackage;
 
     /**
-     * Fail on error flag.
+     * Flag indicating whether to fail on error.
      */
-    @SuppressWarnings("PMD.ImmutableField")
+    @SuppressWarnings({"PMD.ImmutableField", "Checkstyle.MemberNameCheck"})
     @Parameter(defaultValue = "true")
-    private boolean failOnError = true;
+    private boolean failonerror = true;
 
     @Override
     public void execute() throws MojoExecutionException {
-        final String outputDir = this.project.getBuild().getOutputDirectory();
-        final File output = new File(outputDir);
+        final String directory = this.project.getBuild().getOutputDirectory();
+        final File output = new File(directory);
         if (!output.exists()) {
-            this.getLog().info(String.format("Output directory does not exist: '%s'", outputDir));
-            return;
+            throw new MojoExecutionException(
+                "Output directory does not exist: '%s'".formatted(
+                    directory
+                )
+            );
         }
-        this.getLog().info(String.format("Scanning compiled classes in: '%s'", outputDir));
+        this.getLog().info(
+            "Scanning compiled classes in: '%s'".formatted(
+                directory
+            )
+        );
         final ClassGraph graph = new ClassGraph()
-            .overrideClasspath(outputDir)
-            .acceptPackages(this.basePackage)
+            .overrideClasspath(directory)
+            .acceptPackages(this.basepackage)
             .enableClassInfo()
             .enableAnnotationInfo();
-        try (final ScanResult scanResult = graph.scan(PrefixedCop.EXECUTORS, Runtime.getRuntime().availableProcessors())) {
-            final List<ClassInfo> prefixedInterfaces = scanResult
-                .getClassesWithAnnotation(Prefixed.class)
+        try (ScanResult scanResult = graph.scan(
+            PrefixedCop.EXECUTORS,
+            Runtime.getRuntime().availableProcessors()
+        )) {
+            final List<ClassInfo> prefixed = scanResult
+                .getClassesWithAnnotation(RequirePrefix.class)
                 .stream()
                 .filter(ClassInfo::isInterface)
                 .toList();
-            this.getLog().info("Total interfaces found: " + prefixedInterfaces.size());
-            final List<String> errors = new ArrayList<>(0);
-            for (final ClassInfo iface : prefixedInterfaces) {
-                final AnnotationInfo prefixedAnno = iface.getAnnotationInfo().get(Prefixed.class.getName());
-                final AnnotationParameterValue prefixParam = prefixedAnno.getParameterValues().get("prefix");
-                if (prefixParam == null) {
+            this.getLog().info(
+                "Total interfaces found: %d".formatted(
+                    prefixed.size()
+                )
+            );
+            final Collection<String> errors = new ArrayList<>(0);
+            for (final ClassInfo iface : prefixed) {
+                final AnnotationInfo prefixanno =
+                    iface.getAnnotationInfo().get(RequirePrefix.class.getName());
+                final AnnotationParameterValue parameter =
+                    prefixanno.getParameterValues().get("prefix");
+                if (parameter == null) {
                     this.handleMissingPrefix(iface.getName());
                     continue;
                 }
-                final String expectedPrefix = prefixParam.getValue().toString();
-                final ClassInfoList implClasses = scanResult.getClassesImplementing(iface.getName());
-                final List<String> classErrors = implClasses.stream()
-                    .parallel()
-                    .filter(impl -> !impl.isInterface())
-                    .filter(impl -> !impl.getSimpleName().startsWith(expectedPrefix))
-                    .map(impl -> this.formatError(impl.getName(), iface.getSimpleName(), expectedPrefix))
-                    .toList();
-                errors.addAll(classErrors);
-                classErrors.forEach(error -> this.getLog().warn(error));
+                final String prefix = parameter.getValue().toString();
+                final ClassInfoList impls =
+                    scanResult.getClassesImplementing(iface.getName());
+                final List<String> violations = impls.parallelStream()
+                    .filter(it -> !it.isInterface())
+                    .filter(it -> !it.getSimpleName().startsWith(prefix))
+                    .map(
+                        it ->
+                            PrefixedCop.formatError(
+                                it.getName(),
+                                iface.getSimpleName(),
+                                prefix
+                            )
+                    ).toList();
+                errors.addAll(violations);
+                violations.forEach(this.getLog()::warn);
             }
             this.handleErrors(errors);
         }
     }
 
-    private void handleMissingPrefix(final String interfaceName) throws MojoExecutionException {
-        final String msg = String.format(
-            "Interface '%s' is marked with @Prefixed but no prefix provided",
-            interfaceName
-        );
-        if (this.failOnError) {
+    private void handleMissingPrefix(final String interfaze)
+        throws MojoExecutionException {
+        final String msg = "Interface '%s' is marked with @Prefixed but no prefix provided"
+            .formatted(
+                interfaze
+            );
+        if (this.failonerror) {
             throw new MojoExecutionException(msg);
         } else {
             this.getLog().warn(msg);
         }
     }
 
-    private String formatError(final String className, final String interfaceName, final String prefix) {
-        return String.format(
-            "Class '%s' implements '%s' but does not start with prefix '%s'",
-            className, interfaceName, prefix
-        );
+    private static String formatError(
+        final String clazz,
+        final String interfaze,
+        final String prefix) {
+        return "Class '%s' implements '%s' but does not start with prefix '%s'"
+            .formatted(
+                clazz,
+                interfaze,
+                prefix
+            );
     }
 
-    private void handleErrors(final List<String> errors) throws MojoExecutionException {
+    private void handleErrors(final Collection<String> errors)
+        throws MojoExecutionException {
         if (!errors.isEmpty()) {
             final String message = String.join("\n", errors);
-            if (this.failOnError) {
-                throw new MojoExecutionException(errors.size() + " prefix violations found:\n" + message);
+            if (this.failonerror) {
+                throw new MojoExecutionException(
+                    "%d prefix violations found:%n%s".formatted(
+                        errors.size(),
+                        message
+                    )
+                );
             } else {
-                this.getLog().warn(errors.size() + " prefix violations (non-fatal):\n" + message);
+                this.getLog().warn(
+                    "%d prefix violations (non-fatal):%n%s".formatted(
+                        errors.size(),
+                        message
+                    )
+                );
             }
         }
     }

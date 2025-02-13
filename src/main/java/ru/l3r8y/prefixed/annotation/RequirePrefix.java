@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Prefixed {
+public @interface RequirePrefix {
 
     /**
      * Value of the prefix.

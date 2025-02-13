@@ -1,2 +1,0 @@
-class UtSecond implements UnderTestInterface {
-}
