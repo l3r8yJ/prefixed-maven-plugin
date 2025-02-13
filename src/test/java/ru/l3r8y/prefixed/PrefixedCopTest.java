@@ -21,6 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+/*
+ * @todo:8:60min Rewrite test in invoker or setup these.
+ *   In current condition tests just don't work properly,
+ *   We have two options here:
+ *   1. Migration to invoker plugin and stay only with integration tests.
+ *   2. Setup `Farea` properly and use it WITH invoker test projects.
+ * */
 package ru.l3r8y.prefixed;
 
 import com.yegor256.Mktmp;
