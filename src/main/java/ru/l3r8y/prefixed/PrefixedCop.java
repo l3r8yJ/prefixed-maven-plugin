@@ -81,8 +81,7 @@ public final class PrefixedCop extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         final String directory = this.project.getBuild().getOutputDirectory();
-        final File output = new File(directory);
-        if (!output.exists()) {
+        if (!new File(directory).exists()) {
             throw new MojoExecutionException(
                 "Output directory does not exist: '%s'".formatted(
                     directory
@@ -94,15 +93,12 @@ public final class PrefixedCop extends AbstractMojo {
                 directory
             )
         );
-        final ClassGraph graph = new ClassGraph()
-            .overrideClasspath(directory)
-            .acceptPackages(this.basepackage)
-            .enableClassInfo()
-            .enableAnnotationInfo();
-        try (ScanResult scanResult = graph.scan(
-            PrefixedCop.EXECUTORS,
-            Runtime.getRuntime().availableProcessors()
-        )) {
+        try (ScanResult scanResult = this.graphOf(directory)
+            .scan(
+                PrefixedCop.EXECUTORS,
+                Runtime.getRuntime().availableProcessors()
+            )
+        ) {
             final List<ClassInfo> prefixed = scanResult
                 .getClassesWithAnnotation(RequirePrefix.class)
                 .stream()
@@ -144,11 +140,26 @@ public final class PrefixedCop extends AbstractMojo {
         }
     }
 
+    /**
+     * Configures class graph with directory.
+     *
+     * @param directory Directory to scan.
+     * @return Configured class graph.
+     */
+    private ClassGraph graphOf(final String directory) {
+        return new ClassGraph()
+            .overrideClasspath(directory)
+            .acceptPackages(this.basepackage)
+            .enableClassInfo()
+            .enableAnnotationInfo();
+    }
+
     private void handleMissingPrefix(final String interfaze)
         throws MojoExecutionException {
-        final String msg = "Interface '%s' is marked with @Prefixed but no prefix provided"
+        final String msg = "Interface '%s' is marked with %s but no prefix provided"
             .formatted(
-                interfaze
+                interfaze,
+                RequirePrefix.class.getSimpleName()
             );
         if (this.failonerror) {
             throw new MojoExecutionException(msg);
@@ -183,7 +194,7 @@ public final class PrefixedCop extends AbstractMojo {
                 );
             } else {
                 this.getLog().warn(
-                    "%d prefix violations (non-fatal):%n%s".formatted(
+                    "%d prefix violations :%n%s".formatted(
                         errors.size(),
                         message
                     )
