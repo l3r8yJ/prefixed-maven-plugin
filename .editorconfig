@@ -17,6 +17,9 @@ ij_kotlin_imports_layout = *
 
 ktlint_standard_argument-list-wrapping = disabled
 
+[*.md]
+indent_size = 2
+
 [*.java]
 ij_java_align_consecutive_assignments = false
 ij_java_align_consecutive_variable_declarations = false

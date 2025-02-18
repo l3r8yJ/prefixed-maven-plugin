@@ -67,7 +67,8 @@ SOFTWARE.
   </issueManagement>
   <scm>
     <connection>scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git
+    <developerConnection>
+      scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git
     </developerConnection>
     <url>https://github.com/l3r8yJ/prefixed-maven-plugin</url>
   </scm>

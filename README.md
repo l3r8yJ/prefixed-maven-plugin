@@ -27,20 +27,20 @@ Add the plugin to your `pom.xml`:
 ```xml
 
 <build>
-    <plugins>
-        <plugin>
-            <groupId>ru.l3r8y</groupId>
-            <artifactId>prefix-enforcer-maven-plugin</artifactId>
-            <version>1.0.0</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>enforce</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
+  <plugins>
+    <plugin>
+      <groupId>ru.l3r8y</groupId>
+      <artifactId>prefix-enforcer-maven-plugin</artifactId>
+      <version>1.0.0</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>enforce</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
 </build>
 ```
 
@@ -79,10 +79,10 @@ Configure the plugin in your `pom.xml`:
 ```xml
 
 <configuration>
-    <!-- Fail build on violation (default: true) -->
-    <failOnError>true</failOnError>
-    <!-- Your group id by default   -->
-    <basePackage>{groupId}</basePackage>
+  <!-- Fail build on violation (default: true) -->
+  <failOnError>true</failOnError>
+  <!-- Your group id by default   -->
+  <basePackage>{groupId}</basePackage>
 </configuration>
 ```
 
