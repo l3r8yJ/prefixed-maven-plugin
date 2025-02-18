@@ -41,4 +41,4 @@ release:
     git commit -am "${tag}"
     mvn clean install -Dinvoker.skip
     export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED"
-    mvn clean deploy -Psonatype --errors --settings ../settings.xml -Dstyle.color=never
+    mvn clean deploy -Prelease --errors --settings ../settings.xml -Dstyle.color=never
