@@ -9,7 +9,7 @@ implementing annotated interfaces.
 ## Overview
 
 This plugin scans classes implementing interfaces annotated with
-`@RequirePrefix(value = "YourPrefix")` and ensures that their names start with the
+`@RequirePrefix(prefix = "YourPrefix")` and ensures that their names start with the
 specified prefix. If a violation is detected, the build fails, promoting
 consistent code style and adherence to naming contracts.
 
