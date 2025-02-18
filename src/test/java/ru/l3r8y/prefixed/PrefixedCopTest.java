@@ -22,11 +22,12 @@
  * SOFTWARE.
  */
 /*
- * @todo #8:60min Rewrite test in invoker or setup these.
+ * @todo #8:60min Rewrite test.
  *   In current condition tests just don't work properly,
- *   We have two options here:
- *   1. Migration to invoker plugin and stay only with integration tests.
- *   2. Setup `Farea` properly and use it WITH invoker test projects.
+ *   We need to rewrite test for 3 cases:
+ *    - Project without violations.
+ *    - Project with few violations.
+ *    - Project with few violations, but failOnError will set to false.
  * */
 package ru.l3r8y.prefixed;
 
