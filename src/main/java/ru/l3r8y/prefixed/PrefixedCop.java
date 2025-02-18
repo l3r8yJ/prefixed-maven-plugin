@@ -111,10 +111,10 @@ public final class PrefixedCop extends AbstractMojo {
             );
             final Collection<String> errors = new ArrayList<>(0);
             for (final ClassInfo iface : prefixed) {
-                final AnnotationInfo prefixanno =
+                final AnnotationInfo annotation =
                     iface.getAnnotationInfo().get(RequirePrefix.class.getName());
                 final AnnotationParameterValue parameter =
-                    prefixanno.getParameterValues().get("prefix");
+                    annotation.getParameterValues().get("prefix");
                 if (parameter == null) {
                     this.handleMissingPrefix(iface.getName());
                     continue;
