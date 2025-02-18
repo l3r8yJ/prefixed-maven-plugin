@@ -48,8 +48,11 @@ Add the plugin to your `pom.xml`:
 Annotate your interface with `@Prefixed`:
 
 ```java
-@Prefixed(prefix = "Logger")
-public interface Logger { ... }
+import ru.l3r8y.prefixed.annotation.RequirePrefix;
+
+@RequirePrefix(prefix = "Logger")
+public interface Logger { ...
+}
 ```
 
 Implement the interface with a correctly prefixed class:
