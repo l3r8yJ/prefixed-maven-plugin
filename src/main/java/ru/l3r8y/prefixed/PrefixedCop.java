@@ -75,7 +75,7 @@ public final class PrefixedCop extends AbstractMojo {
      * Flag indicating whether to fail on error.
      */
     @SuppressWarnings("PMD.ImmutableField")
-    @Parameter(defaultValue = "true")
+    @Parameter(property = "failOnError", defaultValue = "true")
     private boolean failonerror = true;
 
     @Override
