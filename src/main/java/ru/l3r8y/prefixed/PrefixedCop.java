@@ -129,7 +129,7 @@ public final class PrefixedCop extends AbstractMojo {
                         it ->
                             PrefixedCop.formatError(
                                 it.getName(),
-                                iface.getSimpleName(),
+                                iface.getName(),
                                 prefix
                             )
                     ).toList();
