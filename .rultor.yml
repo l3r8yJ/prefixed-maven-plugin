@@ -25,9 +25,9 @@ architect:
 docker:
   image: yegor256/rultor-java
 assets:
-  settings.xml: l3r8yJ/home#settings.xml
-  pubring.gpg: l3r8yJ/home#pubring.gpg
-  secring.gpg: l3r8yJ/home-secrets#secring.gpg
+  settings.xml: l3r8yJ/home#assets/settings.xml
+  secring.gpg: l3r8yJ/home#assets/secring.gpg
+  pubring.gpg: l3r8yJ/home#assets/pubring.gpg
 install: |
   pdd --file=/dev/null
 merge:
