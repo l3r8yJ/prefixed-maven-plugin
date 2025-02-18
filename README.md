@@ -9,13 +9,13 @@ implementing annotated interfaces.
 ## Overview
 
 This plugin scans classes implementing interfaces annotated with
-`@Prefixed(value = "YourPrefix")` and ensures that their names start with the
+`@RequirePrefix(value = "YourPrefix")` and ensures that their names start with the
 specified prefix. If a violation is detected, the build fails, promoting
 consistent code style and adherence to naming contracts.
 
 ## Features
 
-* **Annotation-driven validation**: Uses `@Prefixed` to define required
+* **Annotation-driven validation**: Uses `@RequirePrefix` to define required
 prefixes for interface implementations.
 * **Build enforcement**: Fails the build if classes violate the prefix rule.
 * **Customizable checks**: Configure scanning phases and excluded packages.
@@ -45,7 +45,7 @@ Add the plugin to your `pom.xml`:
 
 ## Usage
 
-Annotate your interface with `@Prefixed`:
+Annotate your interface with `@RequirePrefix`:
 
 ```java
 import ru.l3r8y.prefixed.annotation.RequirePrefix;
