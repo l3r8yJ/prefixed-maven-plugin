@@ -63,7 +63,7 @@ public class LoggerFile implements Logger { ...
 } // ✅ Valid
 
 public class FileLogger implements Logger { ...
-}  // ❌ Fails build
+}  // ❌Fails build
 ```
 
 Run the plugin:
