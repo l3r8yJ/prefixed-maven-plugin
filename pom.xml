@@ -35,7 +35,8 @@ SOFTWARE.
   <packaging>maven-plugin</packaging>
   <name>prefixed-maven-plugin</name>
   <description>
-    A Maven plugin that enforces naming conventions for classes implementing interfaces annotated with `@Prefixed`
+    A Maven plugin that enforces naming conventions for classes implementing interfaces annotated
+    with `@Prefixed`
   </description>
   <url>https://github.com/l3r8yJ/prefixed-maven-plugin</url>
   <inceptionYear>2025</inceptionYear>
@@ -66,7 +67,8 @@ SOFTWARE.
   </issueManagement>
   <scm>
     <connection>scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:l3r8yJ/prefixed-maven-plugin.git
+    </developerConnection>
     <url>https://github.com/l3r8yJ/prefixed-maven-plugin</url>
   </scm>
   <ciManagement>

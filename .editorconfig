@@ -515,7 +515,7 @@ ij_shell_minify_program = false
 ij_shell_redirect_followed_by_space = false
 ij_shell_switch_cases_indented = false
 
-[{phpunit.xml.dist, do_registration_api_multi, *.jhm, *.xjb, *.rng, *.wsdl, *.wsdd, *.fxml, *.plan, *.bpmn, *.pom, *.xslt, *.jrxml, *.ant, *.xul, *.xsl, *.xsd, *.tld, *.jnlp, *.wadl, *.xml}]
+[{phpunit.xml.dist,do_registration_api_multi,*.jhm,*.xjb,*.rng,*.wsdl,*.wsdd,*.fxml,*.plan,*.bpmn,*.pom,*.xslt,*.jrxml,*.ant,*.xul,*.xsl,*.xsd,*.tld,*.jnlp,*.wadl,*.xml}]
 ij_xml_block_comment_at_first_column = true
 ij_xml_keep_indents_on_empty_lines = false
 ij_xml_line_comment_at_first_column = true
