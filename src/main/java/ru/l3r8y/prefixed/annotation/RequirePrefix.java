@@ -21,9 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package ru.l3r8y.prefixed.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Tests for prefixed maven plugin.
+ * The prefixed annotation.
  *
  * @since 0.0.0
  */
-package ru.l3r8y.prefixed;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RequirePrefix {
+
+    /**
+     * Value of the prefix.
+     *
+     * @return Value of the prefix, empty string by default.
+     */
+    String prefix() default "";
+}
