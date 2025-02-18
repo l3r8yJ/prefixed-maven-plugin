@@ -1,6 +1,6 @@
-# prefix-enforcer-maven-plugin
+# prefixed-maven-plugin
 
-[![Maven Central](https://img.shields.io/maven-central/v/ru.l3r8y/prefix-enforcer-maven-plugin)](https://central.sonatype.com/artifact/ru.l3r8y/prefix-enforcer-maven-plugin)
+[![Maven Central](https://img.shields.io/maven-central/v/ru.l3r8y/ru.l3r8y/prefixed-maven-plugin)](https://central.sonatype.com/artifact/ru.l3r8y/prefix-enforcer-maven-plugin)
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/mit)
 
 A Maven plugin to enforce prefix-based naming conventions for classes
@@ -30,7 +30,7 @@ Add the plugin to your `pom.xml`:
   <plugins>
     <plugin>
       <groupId>ru.l3r8y</groupId>
-      <artifactId>prefix-enforcer-maven-plugin</artifactId>
+      <artifactId>prefixed-maven-plugin</artifactId>
       <version>1.0.0</version>
       <executions>
         <execution>
