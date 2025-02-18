@@ -16,7 +16,7 @@ consistent code style and adherence to naming contracts.
 ## Features
 
 * **Annotation-driven validation**: Uses `@RequirePrefix` to define required
-prefixes for interface implementations.
+  prefixes for interface implementations.
 * **Build enforcement**: Fails the build if classes violate the prefix rule.
 * **Customizable checks**: Configure scanning phases and excluded packages.
 
@@ -25,21 +25,22 @@ prefixes for interface implementations.
 Add the plugin to your `pom.xml`:
 
 ```xml
+
 <build>
-  <plugins>
-    <plugin>
-      <groupId>ru.l3r8y</groupId>
-      <artifactId>prefix-enforcer-maven-plugin</artifactId>
-      <version>1.0.0</version>
-      <executions>
-        <execution>
-          <goals>
-            <goal>enforce</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-  </plugins>
+    <plugins>
+        <plugin>
+            <groupId>ru.l3r8y</groupId>
+            <artifactId>prefix-enforcer-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>enforce</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
 </build>
 ```
 
@@ -58,8 +59,11 @@ public interface Logger { ...
 Implement the interface with a correctly prefixed class:
 
 ```java
-public class LoggerFile implements Logger { ... } // ✅ Valid
-public class FileLogger implements Logger { ... }  // ❌ Fails build
+public class LoggerFile implements Logger { ...
+} // ✅ Valid
+
+public class FileLogger implements Logger { ...
+}  // ❌ Fails build
 ```
 
 Run the plugin:
@@ -73,11 +77,12 @@ mvn clean verify
 Configure the plugin in your `pom.xml`:
 
 ```xml
+
 <configuration>
-  <!-- Fail build on violation (default: true) -->
-  <failOnError>true</failOnError>
-  <!-- Your group id by default   -->
-  <basePackage>{groupId}</basePackage>
+    <!-- Fail build on violation (default: true) -->
+    <failOnError>true</failOnError>
+    <!-- Your group id by default   -->
+    <basePackage>{groupId}</basePackage>
 </configuration>
 ```
 
