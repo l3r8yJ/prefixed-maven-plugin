@@ -57,7 +57,7 @@ public final class PrefixedCop extends AbstractMojo {
      * Thread pool to scan project.
      */
     private static final ExecutorService EXECUTORS =
-        Executors.newVirtualThreadPerTaskExecutor();
+        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
      * The Maven project.
