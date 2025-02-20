@@ -335,8 +335,8 @@ SOFTWARE.
         <artifactId>maven-compiler-plugin</artifactId>
         <!-- version from the parent pom -->
         <configuration>
-          <source>17</source>
-          <target>17</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
     </plugins>
