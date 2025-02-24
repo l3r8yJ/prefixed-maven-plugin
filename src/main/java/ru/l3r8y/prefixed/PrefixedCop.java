@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -83,13 +84,15 @@ public final class PrefixedCop extends AbstractMojo {
         final String directory = this.project.getBuild().getOutputDirectory();
         if (!new File(directory).exists()) {
             throw new MojoExecutionException(
-                "Output directory does not exist: '%s'".formatted(
+                String.format(
+                    "Output directory does not exist: '%s'",
                     directory
                 )
             );
         }
         this.getLog().info(
-            "Scanning compiled classes in: '%s'".formatted(
+            String.format(
+                "Scanning compiled classes in: '%s'",
                 directory
             )
         );
@@ -103,9 +106,10 @@ public final class PrefixedCop extends AbstractMojo {
                 .getClassesWithAnnotation(RequirePrefix.class)
                 .stream()
                 .filter(ClassInfo::isInterface)
-                .toList();
+                .collect(Collectors.toList());
             this.getLog().info(
-                "Total interfaces found: %d".formatted(
+                String.format(
+                    "Total interfaces found: %d",
                     prefixed.size()
                 )
             );
@@ -132,7 +136,7 @@ public final class PrefixedCop extends AbstractMojo {
                                 iface.getName(),
                                 prefix
                             )
-                    ).toList();
+                    ).collect(Collectors.toList());
                 errors.addAll(violations);
                 violations.forEach(this.getLog()::warn);
             }
@@ -156,11 +160,11 @@ public final class PrefixedCop extends AbstractMojo {
 
     private void handleMissingPrefix(final String interfaze)
         throws MojoExecutionException {
-        final String msg = "Interface '%s' is marked with %s but no prefix provided"
-            .formatted(
-                interfaze,
-                RequirePrefix.class.getSimpleName()
-            );
+        final String msg = String.format(
+            "Interface '%s' is marked with %s but no prefix provided",
+            interfaze,
+            RequirePrefix.class.getSimpleName()
+        );
         if (this.failonerror) {
             throw new MojoExecutionException(msg);
         } else {
@@ -173,12 +177,12 @@ public final class PrefixedCop extends AbstractMojo {
         final String interfaze,
         final String prefix
     ) {
-        return "Class '%s' implements '%s' but does not start with prefix '%s'"
-            .formatted(
-                clazz,
-                interfaze,
-                prefix
-            );
+        return String.format(
+            "Class '%s' implements '%s' but does not start with prefix '%s'",
+            clazz,
+            interfaze,
+            prefix
+        );
     }
 
     private void handleErrors(final Collection<String> errors)
@@ -187,14 +191,16 @@ public final class PrefixedCop extends AbstractMojo {
             final String message = String.join("\n", errors);
             if (this.failonerror) {
                 throw new MojoExecutionException(
-                    "%d prefix violations found:%n%s".formatted(
+                    String.format(
+                        "%d prefix violations found:%n%s",
                         errors.size(),
                         message
                     )
                 );
             } else {
                 this.getLog().warn(
-                    "%d prefix violations :%n%s".formatted(
+                    String.format(
+                        "%d prefix violations :%n%s",
                         errors.size(),
                         message
                     )
